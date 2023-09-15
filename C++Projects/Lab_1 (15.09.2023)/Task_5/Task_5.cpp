@@ -1,0 +1,26 @@
+#include <iostream>
+#include <math.h>
+
+int main()
+{
+	setlocale(LC_ALL, "Rus");
+
+	float x, y, r, A = 1;
+	int c;
+
+	std::cout << "Введите X: ";
+	std::cin >> x;
+	std::cout << "Введите Y: ";
+	std::cin >> y;
+	
+	r = sqrt(x*x + y*y); // Дистанция от центра круга (должна быть больше чем радиус)
+	c = (y >= -2*A); // Нижняя сторона треугольника (точка должна быть выше)
+
+	// y = -fabs(x) + 2*A - графиком является вершина треугольника
+	c = c && (y <= -fabs(x) + 2*A) && (r >= A);
+
+	if (c) std::cout << "Точка в области \n";
+	else std::cout << "Точка вне области \n";
+
+	return 0;
+}
