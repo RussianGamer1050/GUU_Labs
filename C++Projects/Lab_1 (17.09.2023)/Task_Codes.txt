@@ -1,0 +1,131 @@
+T_1
+
+#include <iostream>
+
+int main()
+{
+	setlocale(LC_ALL, "Rus"); // Корректное отображение русского языка
+
+	int i = 12, j = 5;
+	float x, y = 0;
+
+	x = (float)(i / j);
+	y = (float)(i % j);
+
+	std::cout << "x = " << x << "; y = " << y << std::endl;
+	std::cout << "Размер x и y соответственно равны " << sizeof(x)
+		<< " и " << sizeof(y) << " байт (тип float)" << std::endl;
+
+	return 0;
+}
+
+-------------------------------------------------------------------------------------------
+
+T_2
+
+#include <iostream>
+
+int main()
+{
+	setlocale(LC_ALL, "Rus");
+
+	int A, k = 1;
+	A = 9;
+
+	if (A % 3) k = k + A / 5;
+	else k = k + A / 2;
+
+	std::cout << "k = " << k << std::endl;
+	std::cout << "Размер k равен " << sizeof(k)
+		<< " байтам (тип int)" << std::endl;
+
+	return 0;
+}
+
+-------------------------------------------------------------------------------------------
+
+T_3
+
+#include <iostream>
+
+int main() 
+{
+	setlocale(LC_ALL, "Rus");
+
+	int m = 6 % 3;
+	
+	switch (m = 0) 
+	{
+	case 2: m++; break;
+	case 1: m++; break;
+	case 3: m++;
+	}
+	
+	std::cout << "m = " << m << std::endl;
+	std::cout << "Размер m равен "<< sizeof(m)
+		<< " байтам (тип int)" << std::endl;
+
+	return 0;
+}
+
+-------------------------------------------------------------------------------------------
+
+T_4
+
+#include <iostream>
+
+int main()
+{
+	setlocale(LC_ALL, "Rus");
+
+	long B, P, A = 2013;
+	int C;
+
+	B = 0;
+	P = 1;
+
+	while (A)
+	{
+		C = A % 10;
+		A = A / 10;
+		if (C % 2) B = B + C;
+		P = P * 10;
+	}
+	
+	std::cout << "B = " << B << std::endl;
+	std::cout << "Размер B равен " << sizeof(B) 
+		<< " байтам (тип long)" << std::endl;
+
+	return 0;
+}
+
+-------------------------------------------------------------------------------------------
+
+T_5
+
+#include <iostream>
+#include <math.h>
+
+int main()
+{
+	setlocale(LC_ALL, "Rus");
+
+	float x, y, r, A = 1;
+	int c;
+
+	std::cout << "Введите X: ";
+	std::cin >> x;
+	std::cout << "Введите Y: ";
+	std::cin >> y;
+	
+	r = sqrt(x*x + y*y); // Дистанция от центра круга (должна быть больше чем радиус)
+	c = (y >= -2*A); // Нижняя сторона треугольника (точка должна быть выше)
+
+	// y = -fabs(x) + 2*A - графиком является вершина треугольника
+	c = c && (y <= -fabs(x) + 2*A) && (r >= A);
+
+	if (c) std::cout << "Точка в области \n";
+	else std::cout << "Точка вне области \n";
+
+	return 0;
+}
