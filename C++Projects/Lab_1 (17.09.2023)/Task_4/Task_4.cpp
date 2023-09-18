@@ -14,7 +14,7 @@ int main()
 	{
 		C = A % 10;
 		A = A / 10;
-		if (C % 2) B = B + C;
+		if (C % 2) B = B + C * P;
 		P = P * 10;
 	}
 	
