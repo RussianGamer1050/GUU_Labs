@@ -1,0 +1,88 @@
+#include <iostream>
+#include <string.h>
+
+using namespace std;
+const int M = 5;
+
+// Объявление классов
+class River {
+	string name;
+	string region;
+	int len;
+	short difficulty;
+	int incidents[M];
+public:
+	void input();
+	void print();
+	int inc_num();
+};
+
+
+// Реализации
+
+void River::input() {
+	cout << "Введите следующие значения" << endl;
+	cout << "Название: "; cin >> name;
+	cout << "Регион: "; cin >> region;
+	cout << "Протяжённость участка, пригодного для сплава: "; cin >> len;
+	cout << "Сложность (0-6): "; cin >> difficulty;
+	cout << "Rоличество несчастных случаев за 5 лет: ";
+	for (int i = 0; i < M; i++) cin >> incidents[i];
+	cout << endl;
+}
+
+
+void River::print() {
+	cout << "Информация по данному объекту" << endl;
+	cout << "Название: " << name << endl;
+	cout << "Регион: " << region << endl;
+	cout << "Протяжённость участка, пригодного для сплава: " << len << endl;
+	cout << "Сложность (0-6): " << difficulty << endl;
+	cout << "Rоличество несчастных случаев за 5 лет: ";
+	for (int i = 0; i < M; i++) cout << incidents[i] << " ";
+	cout << endl;
+}
+
+
+int River::inc_num() {
+	int sum = 0;
+	for (int i = 0; i < M; i++) 
+		sum += incidents[i];
+	return sum;
+}
+
+
+int main() {
+
+	setlocale(LC_ALL, "Rus");
+
+	River a;
+	River* p = new River;
+
+	// Вызов методов для a
+	cout << " <<< Первый объект >>> " << endl;
+	a.input();
+	a.print();
+	cout << "Общее количество несчастных случаев за 5 лет: " << a.inc_num() << endl << endl;
+
+	// Вызов методов для p
+	cout << " <<< Второй объект >>> " << endl;
+	p->input();
+	p->print();
+	cout << "Общее количество несчастных случаев за 5 лет: " << p->inc_num() << endl << endl;
+
+	// Создание динамического массива
+	int m = 3; // количество элементов массива
+	River* mass = new River[m];
+	for (int i = 0; i < m; i++) {
+		cout << "Введите " << i << " объект" << endl;
+		mass[i].input(); mass[i].print(); cout << "Общее количество несчастных случаев за 5 лет: " << mass[i].inc_num() << endl << endl;
+	}
+
+	// Освобождение памяти
+	delete p;
+	delete[] mass;
+
+
+	return 0;
+}
