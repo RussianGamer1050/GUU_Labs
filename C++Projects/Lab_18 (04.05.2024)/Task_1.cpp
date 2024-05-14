@@ -1,0 +1,229 @@
+#include <iostream>
+#include <fstream>
+#include <iomanip> // setw()
+
+using namespace std;
+
+const int M = 5; // Количество специальностей цеха
+
+// ******************************** Класс, характеризующий цех ********************************
+class Factory {
+public:
+	friend class File_Factory;
+	int number; // Номер цеха
+	string name; // Название
+	string supervisor; // Ф.И.О. Начальника
+	int filling[M]; // Укомплектованность по каждой специальности (%)
+	string plan; // Производственный план
+	int completion[4]; // Выполнение плана на каждый квартал года (%)
+
+	Factory(int d_number = 0, string d_name = "Default Firm", string d_supervisor = "Ivanov Ivan Ivanovich",
+		int d_filling = 0, string d_plan = "Test", int d_completion = 0);
+	Factory(Factory& obj);
+
+	void title(); // Шапка данных
+	void add(); // Ввод значений с клавиатуры
+
+	Factory& operator = (Factory& obj); // Перегрузка присваивания Factory = Factory
+	friend ostream& operator << (ostream& o, Factory& obj); // Перегрузка вывода
+	friend istream& operator >> (istream& i, Factory& obj); // Перегрузка вывода
+};
+
+// Конструктор
+Factory::Factory(int d_number, string d_name, string d_supervisor,
+	int d_filling, string d_plan, int d_completion) {
+	number = d_number;
+	name = d_name;
+	supervisor = d_supervisor;
+	for (int i = 0; i < M; i++) filling[i] = d_filling;
+	plan = d_plan;
+	for (int i = 0; i < 4; i++) completion[i] = d_completion;
+}
+
+// Копия
+Factory::Factory(Factory& obj) {
+	number = obj.number;
+	name = obj.name;
+	supervisor = obj.supervisor;
+	for (int i = 0; i < M; i++) filling[i] = obj.filling[i];
+	plan = obj.plan;
+	for (int i = 0; i < 4; i++) completion[i] = obj.completion[i];
+}
+
+// Шапка данных
+void Factory::title() {
+	cout << "\n  № |    Название    |        Ф.И.О. Начальника       |Укомплектованность |      План      |Выполнение плана|" << endl;
+}
+
+// Ввод значений с клавиатуры
+void Factory::add() {
+	cout << " $$$$$$$$$ Введите значения цеха с клавиатуры $$$$$$$$$ " << endl;
+	
+	do {
+		cout << "Номер цеха: "; cin >> number;
+		if (number < 1 || number > 999) cout << " !!!!! Вы ввели некорректное значение !!!!! " << endl;
+	} while (number < 1 || number > 999);
+	
+	do {
+		cout << "Название: "; cin >> name;
+		if (size(name) > 16) cout << " !!!!! Вы ввели некорректное значение !!!!! " << endl;
+	} while (size(name) > 16); // size() возвращает количество символов строки
+	
+	do {
+		cout << "Ф.И.О. начальника: "; cin >> supervisor;
+		if (size(supervisor) > 32) cout << " !!!!! Вы ввели некорректное значение !!!!! " << endl;
+	} while (size(supervisor) > 32); // size() возвращает количество символов строки
+	
+	for (int i = 0; i < M; i++) { 
+		do {
+			cout << "Укомплектованность " << i + 1 << " специальности: ";
+			cin >> filling[i];
+			if (filling[i] < 0 || filling[i] > 100) cout << " !!!!! Вы ввели некорректное значение !!!!! " << endl;
+		} while (filling[i] < 0 || filling[i] > 100);
+	}
+	
+	do {
+		cout << "План: "; cin >> plan;
+		if (size(plan) > 16) cout << " !!!!! Вы ввели некорректное значение !!!!! " << endl;
+	} while (size(plan) > 16); // size() возвращает количество символов строки
+
+	for (int i = 0; i < 4; i++) { 
+		do {
+			cout << "Выполнение плана за " << i + 1 << " квартал: "; 
+			cin >> completion[i];
+			if (completion[i] < 0 || completion[i] > 100) cout << " !!!!! Вы ввели некорректное значение !!!!! " << endl;
+		} while (completion[i] < 0 || completion[i] > 100);
+	}
+}
+
+// Перегрузка присваивания Factory = Factory
+Factory& Factory::operator = (Factory& obj) {
+	number = obj.number;
+	name = obj.name;
+	supervisor = obj.supervisor;
+	for (int i = 0; i < M; i++) filling[i] = obj.filling[i];
+	plan = obj.plan;
+	for (int i = 0; i < 4; i++) completion[i] = obj.completion[i];
+	return *this;
+}
+
+// Перегрузка вывода
+ostream& operator << (ostream& o, Factory& obj) {
+	o << " " << setw(3) << obj.number << " " << setw(16) << obj.name << " " << setw(32) << obj.supervisor;
+	for (int i = 0; i < M; i++) o << " " << setw(3) << obj.filling[i];
+	o << " " << setw(16) << obj.plan;
+	for (int i = 0; i < 4; i++) o << " " << setw(3) << obj.completion[i];
+	o << endl;
+	return o;
+}
+
+// Перегрузка ввода
+istream& operator >> (istream& i, Factory& obj) {
+	i >> obj.number >> obj.name >> obj.supervisor;
+	for (int j = 0; j < M; j++) i >> obj.filling[j];
+	i >> obj.plan;
+	for (int j = 0; j < 4; j++) i >> obj.completion[j];
+	return i;
+}
+
+
+
+// ******************************** Класс, характеризующий файл данных ********************************
+class File_Factory {
+public:
+	string file_name; // Имя используемого файла
+	Factory f;
+
+	File_Factory(string d_file_name = "Default File Name.guulabextention");
+
+	void file_create(); // Запись в файл данных информацию о цехе
+	void file_read(); // Чтение и вывод на экран всех записей файла
+	void file_add(); // Добавление записи в коне файла
+	void file_find(int n); // Поиск в файле цеха с указанным номером
+};
+
+// Конструктор
+File_Factory::File_Factory(string d_file_name) {
+	file_name = d_file_name;
+	Factory d_f; f = d_f;
+}
+
+// Запись в файл данных информацию о цехе
+void File_Factory::file_create() {
+	ofstream ff(file_name); if (!ff) exit(-1);
+	f.add(); ff << f;
+	ff.close();
+}
+
+// Чтение и вывод на экран всех записей файла
+void File_Factory::file_read() {
+	ifstream ff(file_name); if (!ff) exit(-1);
+	f.title();
+	while (ff >> f) { // вместо f.eof(), т.к. второе выводит последнюю записть два раза
+		cout << f;
+	}
+	ff.close();
+}
+
+// Добавление записи в коне файла
+void File_Factory::file_add() {
+	ofstream ff(file_name, ios::app); if (!ff) exit(-1);
+	f.add(); ff << f;
+	ff.close();
+}
+
+// Поиск в файле цеха с указанным номером
+void File_Factory::file_find(int n) {
+	ifstream ff(file_name); if (!ff) exit(-1);
+	int k = 0;
+
+	while (ff >> f) if (f.number == n) k++; // Проверка наличия подходящих записей в файле
+
+	if (k) {
+		ff.clear(); ff.seekg(0); // Возвращает файловый курсор в начало файла
+		f.title();
+		while (ff >> f) {
+			if (f.number == n) cout << f;
+		}
+	}
+	else cout << " !!!! Информации о цехах с таким номером не найдено !!!! \n" << endl;
+	
+	ff.close();
+}
+
+
+
+int main() {
+	setlocale(LC_ALL, "Rus");
+
+	File_Factory a;
+
+	while (1) {
+		cout << "\n $$$$$$$$$ Выберите вариант из выпадающего списка $$$$$$$$$ " << endl;
+		cout << "1) Создать и записать в файл даннных информацию;\n"
+			"2) Просмотреть все записи из файла данных;\n"
+			"3) Добавить запись в файл данных;\n"
+			"4) Выдать справку о цехах с указанным номером;\n"
+			"5) Выход;\n"<< endl;
+		int c; cin >> c;
+		
+		switch (c) {
+		case 1: a.file_create(); break; // Создание файла
+		case 2: a.file_read(); break; // Чтение файла
+		case 3: a.file_add(); break; // Добавление записи в файл
+		case 4: // Вывод сводки цеха с указанным номером
+			while (1) {
+				int f_n;
+				cout << "Введите номер цеха или \"-1 для возврата назад\": "; cin >> f_n;
+				if (f_n == -1) break; 
+				a.file_find(f_n);
+			} break;
+		case 5: return 0; // Выход из программы
+		default: cout << " !!!!! Выбран неверный вариант !!!!! \n" << endl;
+		}
+	}
+
+	return 0;
+}
+
+// Название и Ф.И.О. вписывать без пробелов
