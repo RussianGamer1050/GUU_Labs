@@ -1,0 +1,221 @@
+#include <iostream>
+using namespace std;
+
+
+// класс Товар
+class goods {
+	friend  class el;
+	friend  class list;
+private:
+	string name; // Название
+	float price; // Цена
+	int quantity; // Количество
+
+	goods(string d_name = "Default goods name", float d_price = 0.00, int d_quantity = 0);
+public:
+	void input(); // Заполнение объекта
+	void print(); // Вывод информации о товаре на экран
+};
+
+goods::goods(string d_name, float d_price, int d_quantity) {
+	name = d_name; price = d_price; quantity = d_quantity;
+}
+
+// Заполнение объекта
+void goods::input() {
+	cout << "Название: "; cin >> name;
+	cout << "Цена: "; cin >> price;
+	cout << "Количество: "; cin >> quantity;
+	cout << endl;
+}
+
+// Вывод информации о товаре на экран
+void goods::print() {
+	cout << "Название: " << name << "\n";
+	cout << "Цена: " << price << "\n";
+	cout << "Количество: " << quantity << "\n";
+	cout << endl;
+}
+
+
+// Класс элемента списка
+class el {
+	friend class list;
+private:
+	goods g; // Объект класса Товар
+	el* next; // Ссылка на следующий элемент списка
+public:
+	el(); // next = nullptr
+
+};
+
+el::el() {
+	next = nullptr;
+}
+
+
+// Класс списка
+class list {
+public:
+	el* first, * last; // Ссылки на первый и последний элементы списка
+	el* active; // Для работы с элементами
+
+	list(); // active = first = last = nullptr
+
+	void l_create(); // Создание списка товаров
+	void l_print(); // Вывод списка на экран
+	void l_delf(); // Удаление первого элемента
+	void l_dell(); // Удаление последнего элемента
+	void l_above_avr(); // Вывод информации о товарах, стоимость которых выше средней
+	void l_delete(); // Уничтожение списка
+	
+	int l_empty(); // Проверка на чистоту списка перед выходом
+};
+
+list::list() {
+	active = first = last = nullptr;
+}
+
+// Создание списка товаров
+void list::l_create() {
+	if (first) { cout << "!!! Список уже существует !!!" << endl; return; } // Проверка на существование списка
+	
+	// Последовательное заполнение списка
+	cout << "Последовательно вводите данные в список: " << endl;
+	while (1) {
+		active = new el; // Выделение новой памяти под активный элемент
+
+		if (first != nullptr) { // Проверяем существование первого элемента
+			active->g.input(); // Ввод данных в активный объект
+			last->next = active; // Ссылаемся на следующий объект от предыдущего
+			last = active; // Присваиваем текущему элементу статус последнего
+		}
+
+		if (first == nullptr) { // Если список пустой
+			first = last = active; // Закрепление первого элемента
+			active->g.input(); // Ввод данных в первый элемент
+		}
+
+		// Организация выхода из цикла с проверкой ввода
+		int choice;
+		do {
+			cout << "Желаете продолжить? (1 - продолжить / 0 - выйти) "; cin >> choice;
+			if (choice < 0 || choice > 1) cout << "!!! Выбран некорректный вариант !!!\n";
+		} while (choice < 0 || choice > 1);
+		if (!choice) break;
+	}
+}
+
+// Вывод списка на экран
+void list::l_print() {
+	if (first == nullptr) { cout << "!!! Список не создан !!!" << endl; return; } // Проверка на несуществование списка
+	
+	active = first; // Задаем точку отсчета
+	int k = 1; // Счётчик для красоты вывода
+	while (active) { // Пока active != null
+		cout << k++ << ". элемент:\n";
+		active->g.print();
+		active = active->next; // Переход к следующему элементу
+	}
+	cout << endl;
+}
+
+// Удаление первого элемента
+void list::l_delf() {
+	if (first == nullptr) { cout << "!!! Список не создан !!!" << endl; return; } // Проверка на несуществование списка
+
+	active = first; // Сделать активным первый элемент
+	first = active->next; // Новый первый элемент - второй элемент
+	delete active; // Удалить активный элемент
+
+	cout << "Первый объект удален\n" << endl;
+}
+
+// Удаление последнего элемента
+void list::l_dell() {
+	if (first == nullptr) { cout << "!!! Список не создан !!!" << endl; return; } // Проверка на несуществование списка
+
+	if (first == last) { l_delf(); return; } // Если первый элемент является последним
+
+	active = first; // Сделать активным первый элемент
+	while (active->next != last) active = active->next; // Идем до предпоследнего элемента списка
+	active->next = nullptr;
+	delete last;
+	last = active;
+
+	cout << "Последний объект удален\n" << endl;
+}
+
+// Вывод информации о товарах, стоимость которых выше средней
+void list::l_above_avr() {
+	if (first == nullptr) { cout << "!!! Список не создан !!!" << endl; return; } // Проверка на несуществование списка
+
+	int k = 1; // Количество элементов списка
+	float sum = first->g.price; // Стоимость всех товаров списка, начиная с суммы первого
+	
+	// Подсчёт количества элементов и суммы
+	active = first;
+	while (active->next) { k++; sum += active->next->g.price; active = active->next; }
+
+	// Проверка по заданному условию
+	int fl = 0; // Флаг наличия подходящих элементов в списке
+	active = first;
+	// Перебор всего списка
+	for (int i = 0; i < k; i++) {
+		if (active->g.price > (sum / k)) { active->g.print(); fl = 1; }
+		active = active->next;
+	}
+	if (!fl) cout << "!!! Все товары имеют одинаковую стоимость !!!" << endl; // Если нет подходящих записей
+}
+
+// Уничтожение списка
+void list::l_delete() {
+	if (first == nullptr) { cout << "!!! Список не создан !!!" << endl; return; } // Проверка на несуществование списка
+
+	active = first; // Сделать активным первый элемент
+	while (active->next != nullptr) {
+		first = active->next; // Новый первый элемент - второй элемент
+		delete active; // Удалить активный элемент
+		active = first; // Сделать активным первый элемент
+	}
+	delete active; // Возвращает память обратно в кучу => first != nullptr, поэтому делаем нижеуказанное
+	first = nullptr; // т. к. иначе мы не сможем по-новой создать список
+}
+
+int list::l_empty() {
+	if (first != nullptr) return 0;
+	return 1;
+}
+
+
+int main() {
+	setlocale(LC_ALL, "Rus");
+
+	list a; // Список
+	int choice; // Выбор пользователя в меню
+
+	while (1) {
+		cout << "Выберите необходимый вариант (-1 для выхода):\n"
+			<< "1) Создать список товаров;\n" 
+			<< "2) Распечатать список;\n"
+			<< "3) Удалить первый элемент списка;\n"
+			<< "4) Удалить последний элемент списка;\n"
+			<< "5) Вывести информацию о товарах, стоимость которых выше средней;\n"
+			<< "6) Уничтожить список.\n";
+		cin >> choice; cout << endl;
+
+		// Организация меню
+		switch (choice) {
+		case 1: a.l_create(); break; // Создать список товаров
+		case 2: a.l_print(); break; // Распечатать список
+		case 3: a.l_delf(); break; // Удалить первый элемент списка
+		case 4: a.l_dell(); break; // Удалить последний элемент списка
+		case 5: a.l_above_avr(); break; // Вывести информацию о товарах, стоимость которых выше средней
+		case 6: a.l_delete(); break; // Уничтожить список
+		case -1: if (!a.l_empty()) a.l_delete(); return 0; // Выход с проверкой на чистоту списка
+		default: cout << "!!! Введен некорректный вариант !!!\n"; // Проверка ввода
+		}
+	}
+
+	return 0;
+}
