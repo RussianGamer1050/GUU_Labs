@@ -1,3 +1,4 @@
 (07.09.2024) Lab_1 (Red Bull versus Volkswagen)
 (14.09.2024) Lab_2 (Smoothing Methods)
 (21.09.2024) Lab_3 (Trending Models)
+(28.09.2024) Lab_4 (Multiple Regression)
