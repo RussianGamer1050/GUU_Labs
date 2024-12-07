@@ -1,0 +1,23 @@
+.root {
+    -fx-background-color: #f0f0f0;
+}
+
+.circle {
+    -fx-fill: coral;
+    -fx-effect: dropshadow(gaussian, #000000, 10, 0.5, 0, 0)
+}
+
+.button {
+    -fx-font-size: 14px;
+    -fx-background-color: #4caf50;
+    -fx-text-fill: #f0f0f0;
+    -fx-border-radius: 5;
+}
+
+.button:hover {
+    -fx-background-color: #45a049;
+}
+
+.button:pressed {
+    -fx-background-color: #3e8e41;
+}
